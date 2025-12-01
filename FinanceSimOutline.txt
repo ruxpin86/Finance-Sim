@@ -1,0 +1,39 @@
+'''OUTLINE
+RULES: >1 'Player' >'Player' starts with $2000 in a HYSA that has a safe return of 2-4% annually 
+>The 'Player' portfolio is a set of assets 
+-LOW risk bonds -2% to 9% 
+-MEDIUM risk ETFs -8% to 25% 
+-HIGH risk individual tech stocks -20% to 40%
+-VERY HIGH risk cryptocurrency -50 to 70%
+
+OUTPUT
+> Total portfolio value each year
+> Each assets movement and total after each year
+> Final value after 40 years & a log showing yearly returns
+> Percentage of growth over the 40 year period
+> Percentage left to allocate between assets
+
+'Player' INPUT:
+>Name
+>Every 5th year 'Player' gets to reallocate portfolio distribution by %s
+'''
+
+Next upgrades
+
+) Add in annual contributions to give this a more realistic feel .............DONE
+
+    how to integrate this contribution into compounded growth, ...............DONE
+
+    when to apply it (monthly, yearly, per cycle),
+
+    how to evolve the simulation timeline,
+
+    how to prepare for your “every 10 years reallocation.”
+
+) Print yearly returns per asset
+) Add rebalancing ............................................................DONE
+) Add multi-portfolio save/load
+) Add graphs (matplotlib)
+) Add a “random market events” system (crashes, booms)
+) Add additional asset classes
+) Offer preset portfolio templates ("Aggressive", "Moderate", etc.)
