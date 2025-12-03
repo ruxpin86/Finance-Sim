@@ -161,7 +161,7 @@ def sim_one_year(asset_balances, year):
 def main():
     current_year = 0
     total_years = 40
-    starting_balance = 10000
+    starting_balance = 2000
     asset_list = ["Bonds", "ETFs", "Stocks", "Crypto", "HYSA"]
     annual_contribution_list = [] #empty list to assign (monthly_contributions * 12) to 
 
