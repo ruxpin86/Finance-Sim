@@ -34,7 +34,7 @@ def get_user_allocations(portfolio_balance):
     for i in range(len(user_prompts)):
         prompt, name = user_prompts[i] #unpacking the list of tuples into seperate pieces to be used in the output
 
-        #input validation loop to check 1st: is the input able to be converted to a float 2nd: is the float fall in the range of the percent remaining to allocate
+        #input validation loop to check 1st: is the input able to be converted to a float 2nd: does the float fall in the range of the percent remaining to allocate
         while True:
             print(f"You have {remaining_percentage}% left to divide across your assets.")
             user_input = input(f"How much would you like to allocate to {prompt}?: ")
@@ -59,6 +59,7 @@ def get_user_allocations(portfolio_balance):
 
     #final output to display the breakdown of user_input to the user
     print(("=" * 25) + "PORTFOLIO ALLOCATION BREAKDOWN" + ("=" * 25))
+    #formatting output to be more readable with dot "." to guide users eye to asset amount
     for i in range(len(user_prompts)):
         prompt, name = user_prompts[i]
         label = name + ":"
@@ -88,6 +89,7 @@ def add_monthly_contribution(user_allocations):
     monthly_contribution_list = []
     print("Continuing to invest beyond your initial contribution is critical if you want to see meaningful returns over time.\n" \
     "This super charges your portfolio and really allows you to leverage the power of compound interest over time!!!")
+    #get contribution input, then check input is valid by attempting to convert it to a float
     while True:
         monthly_contribution_amount = input("How much would you like to contribute to your investment portfolio every month? (enter a dollar amount): ")
         print()
@@ -109,7 +111,7 @@ def add_monthly_contribution(user_allocations):
 
 # rebalances portfolio after 10 years back to their original percentage allocations
 def rebalance_every_10th_year(portfolio_balance, asset_balances, allocations, asset_list):
-    year_by_10 = [10, 20, 30, 40] #this has to be in the main function and then looped through and passed as an argument
+    year_by_10 = [10, 20, 30, 40] #this has to be in the main function and then looped through and passed as an argument, something to work on later for better output
     new_asset_balances = []
     print(f"Your portfolio balance after the past decade is now ${portfolio_balance:,.2f}")
     print(("=" * 25) + "PORTFOLIO BREAKDOWN" + ("=" * 25))
@@ -126,7 +128,9 @@ def rebalance_every_10th_year(portfolio_balance, asset_balances, allocations, as
     print()
     for i in range(len(allocations)):
         new_asset_balances.append(portfolio_balance * allocations[i])
-#put in an output for what the portfolio will look like once it is rebalanced
+
+#TODO: put in an output for what the portfolio will look like once it is rebalanced
+
     return new_asset_balances
     
 
@@ -148,22 +152,22 @@ def sim_one_year(asset_balances, year):
     for i in range(len(return_ranges)):
         low, high = return_ranges[i] #unpacks the tuple in return_ranges so it's usable with random()
         random_return = random.uniform(low, high) #getting a random number within the specified range
-        new_asset_balance = asset_balances[i] * (1 + random_return)
-        updated_balances.append(new_asset_balance)
+        new_asset_balance = asset_balances[i] * (1 + random_return) #multiply asset_balance by random_return to get growth or loss for the year
+        updated_balances.append(new_asset_balance) #assign that updated balance to the list updated_balances
 
     year += 1
 
     return updated_balances, year
 
-    #print a yearly summary with percent increases and the amount made in each asset category
+    #TODO: print a yearly summary with percent increases and the amount made in each asset category
 
 #main function to run the program
 def main():
-    current_year = 0
-    total_years = 40
-    starting_balance = 2000
-    asset_list = ["Bonds", "ETFs", "Stocks", "Crypto", "HYSA"]
-    annual_contribution_list = [] #empty list to assign (monthly_contributions * 12) to 
+    current_year = 0 #initialize the year
+    total_years = 40 #set the length/time horizon of the simulation
+    starting_balance = 2000 #users balance to start the simulation (this could easily just be zero with the monthly contribution providing the fuel)
+    asset_list = ["Bonds", "ETFs", "Stocks", "Crypto", "HYSA"] #List of assets as strings for output
+    annual_contribution_list = [] #empty list to assign (monthly_contributions * 12) to store monthly converted to yearly
 
     #get user asset allocations
     allocations = get_user_allocations(starting_balance)
@@ -177,11 +181,11 @@ def main():
 
     #convert the user input allocation percentages into dollar amounts across the defined starting_balance
     asset_balances = allocate_initial_balances(allocations, starting_balance)
-    #add on the annual contribution amounts to each asset class ... is this working for HYSA too?
 
+    #add on the annual contribution amounts to each asset class
     portfolio_balance = sum(asset_balances)
 
-    def pre_year_summary():
+    def pre_year_summary(): #I may use this function in the future to provide more output to user, but for now it was a bit much in the terminal
         print(f"{user_name}, this is your current breakdown of allocations and current account values...")
         for i in range(len(asset_balances)):
             print(f"{asset_list[i]} {allocations[i] * 100:.1f}%, {asset_balances[i]:,.2f}")
@@ -194,15 +198,17 @@ def main():
         for balance in range(len(asset_balances)):
             asset_balances[balance] += annual_contribution_list[balance]
         # print(f"After year {current_year} your accounts are now at:")
-        # for i in range(len(asset_balances)):
-        #     print(f"{asset_list[i]}: {asset_balances[i]:,.2f}")
-        portfolio_balance = sum(asset_balances)
+        # for i in range(len(asset_balances)):                      THIS CAN ALL BE IGNORED, MAY USE IN THE FUTURE BUT CURRENTLY BLOATING THE OUTPUT
+        #     print(f"{asset_list[i]}: {asset_balances[i]:,.2f}") 
+        portfolio_balance = sum(asset_balances) #totaling up all assets to output total value of the users portfolio
         # print(f"Total: {portfolio_balance:,.2f}\n")
+
+        #for every decade of the simulation rebalance that portfolio back to the original allocations defined by the user and print breakdown
         if current_year % 10 == 0:
             asset_balances = rebalance_every_10th_year(portfolio_balance, asset_balances, allocations, asset_list)
             
 
-    
+    #final output for investment results after defined amount of years... I could have the user define their time horizon to tailor it to their investment goals
     print(f"After year {current_year} your accounts are now at:")
     for i in range(len(asset_balances)):
         print(f"{asset_list[i]}: {asset_balances[i]:,.2f}")
@@ -212,6 +218,8 @@ def main():
 if __name__ == "__main__":
     main()
 
+
+#TO ANYONE GRADING THIS FEEL FREE TO IGNORE BELOW THIS LINE!!!
 #------------------------------TEST LAND------------------------------#
 
 #Testing get_user_allocations()
