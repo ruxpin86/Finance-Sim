@@ -1,6 +1,7 @@
 
 import random
 
+#TODO: let the user choose time horizon and work on cleaning up output instruction
 user_name = input("What is your name?: ")
 print()
 print(f"Welcome to the 40 year financial simulator game {user_name}!\n")
@@ -13,7 +14,7 @@ print("Your portfolio is comprised of 5 investment types:\n" \
 "4--> Cryptocurrency or 'Crypto' that can yield -50% - +70% annually ----> (VERY HIGH RISK)\n"
 "5--> High Yield Savings Account (HYSA) which yields 2% - +4% annually --> (NO RISK)\n\n")
 
-#Asks the user how they would like to spread their funds across the pre-defined assets
+#asks the user how they would like to spread their funds across the pre-defined assets
 def get_user_allocations(portfolio_balance):
     print(f"How do you want to spread your current portfolio value of ${portfolio_balance:,.2f} across your asset options?\n")
     print(f"Enter a  number between 0-100 to indicate the percentage you would like to allocate to each when prompted.")
@@ -155,7 +156,7 @@ def sim_one_year(asset_balances, year):
         new_asset_balance = asset_balances[i] * (1 + random_return) #multiply asset_balance by random_return to get growth or loss for the year
         updated_balances.append(new_asset_balance) #assign that updated balance to the list updated_balances
 
-    year += 1
+    year += 1 #increment year, duh
 
     return updated_balances, year
 
@@ -220,6 +221,7 @@ if __name__ == "__main__":
 
 
 #TO ANYONE GRADING THIS FEEL FREE TO IGNORE BELOW THIS LINE!!!
+
 #------------------------------TEST LAND------------------------------#
 
 #Testing get_user_allocations()
