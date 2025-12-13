@@ -35,5 +35,16 @@ Next upgrades
 ) Add multi-portfolio save/load
 ) Add graphs (matplotlib)
 ) Add a “random market events” system (crashes, booms)
+    Start with market-wide events: -interest rates -GDP numbers -Retail Sales/Consumer Spending -Manufacturing 
+    -Financial Crisis -Pandemic -Geopolitical tensions (war, sanctions) -Elections
+
+    Starter List of Events (Event/Outcome/Probability):
+        >Recession = all assets -15% (25% every 3rd year)
+        >Tech Surge = ETFs +15% and Stocks +8% (65% every year)
+        >Crypto Crash = Crypto -50% (40% every year)
+        >Pandemic = all assets -35% (3% every year)
+        >Favorable Election = Stocks +8% ETFs +12% (50/50 every 4th year)
+        >Lower Interest Rates = Bonds +10% (for 2 years following Recession event)
+
 ) Add additional asset classes
 ) Offer preset portfolio templates ("Aggressive", "Moderate", etc.)
