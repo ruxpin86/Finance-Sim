@@ -24,27 +24,77 @@ Next upgrades
 
     how to integrate this contribution into compounded growth, ...............DONE
 
-    when to apply it (monthly, yearly, per cycle),
+    when to apply it (monthly, yearly, per cycle),............................YEARLY DONE
 
     how to evolve the simulation timeline,
 
-    how to prepare for your “every 10 years reallocation.”
+    how to prepare for your “every 10 years reallocation.”....................DONE
 
 ) Print yearly returns per asset
 ) Add rebalancing ............................................................DONE
 ) Add multi-portfolio save/load
 ) Add graphs (matplotlib)
+
+
 ) Add a “random market events” system (crashes, booms)
-    Start with market-wide events: -interest rates -GDP numbers -Retail Sales/Consumer Spending -Manufacturing 
+    Start with market-wide events: -Interest rates -GDP numbers -Retail Sales/Consumer Spending -Manufacturing 
     -Financial Crisis -Pandemic -Geopolitical tensions (war, sanctions) -Elections
 
     Starter List of Events (Event/Outcome/Probability):
         >Recession = all assets -15% (25% every 3rd year)
-        >Tech Surge = ETFs +15% and Stocks +8% (65% every year)
-        >Crypto Crash = Crypto -50% (40% every year)
+        >Tech Surge = ETFs +15% and Stocks +8% (20% every year)
+        >Crypto Crash = Crypto -25% (25% every year)
         >Pandemic = all assets -35% (3% every year)
-        >Favorable Election = Stocks +8% ETFs +12% (50/50 every 4th year)
-        >Lower Interest Rates = Bonds +10% (for 2 years following Recession event)
+        >Favorable Election = Stocks +8% ETFs +12% (50% every 4th year)
+        >Lower Interest Rates (LIR) = Bonds +10% (for 3 years following 'Recession' OR 'Pandemic' event)
+        >>>Multiple events can happen each year, but...
+            'Recession' blocks a 'Tech Surge' for that year and the year following but can happen in years 2&3 of 'LIR' 
+            'Recession' cannot occur back-to-back
+            'Recession' and 'Crypto Crash' can occur in the same year
+            'Recession' resets the interest rate timer
+            'Pandemic' cancels the chance of all other events except 'Recession' and resets 'Recession' clock regardless.
+                'Recession' has a 33% chance of occurring during 'Pandemic'
+                'Favorable Election' cannot override 'Recession' during a 'Pandemic'
+                'Pandemic' will trigger 'LIR' even without 'Recession'
+                'LIR' cannot stack if both 'Pandemic' and 'Recession' occur in same year
+                'Crypto Crash' can occur during 'Pandemic'
+            'Recession' of any kind block 'Tech Surge' for that year
+            'Recession' or 'Pandemic' resets timer to 3 years 
+            'Favorable Election' nullifies 'Crypto Crash'
+            In non-'Pandemic' years 'Favorable Election' prevents a 'Recession'
+            'Favorable Election' overrides 'Recession' occurring.
+            'LIR' can stack with other positive events.
+        >>>All events should occur before annual contributions.
+        Events Hierarchy:
+        1. Pandemic
+        2. Recession
+        3. Favorable Election
+        4. Tech Surge
+        5. Crypto Crash
+        6. Lower Interest Rates (activate when condition is met)
+    Variables:
+        recession_pandemic_blocked_years_remaining = 6
+        tech_surge_blocked_years_remianing = 1
+        crypto_crash_blocked_years_remaining = 1
+        election_year_interval = 3
+        LIR_years_remaining = 3
+    
+    Example Scenario:
+        Year 12: 'Pandemic' occurs
+            recession_pandemic_blocked_years_remaining = 6
+            tech_surge_blocked_years_remianing = 1
+            crypto_crash_blocked_years_remaining = 0
+            LIR_years_remaining = 3
+            election_year_interval = 0 
+        Year 13: Therefore looks like this...
+            recession_pandemic_blocked_years_remaining = 5
+            tech_surge_blocked_years_remianing = 0
+            crypto_crash_blocked_years_remaining = 0   
+            LIR_years_remaining = 2
+            election_year_interval = 3
+            
 
+FOR LATER
 ) Add additional asset classes
 ) Offer preset portfolio templates ("Aggressive", "Moderate", etc.)
+
