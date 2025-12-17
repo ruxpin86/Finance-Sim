@@ -59,7 +59,7 @@ Next upgrades
                 'LIR' cannot stack if both 'Pandemic' and 'Recession' occur in same year
                 'Crypto Crash' can occur during 'Pandemic'
             'Recession' of any kind block 'Tech Surge' for that year
-            'Recession' or 'Pandemic' resets timer to 3 years 
+            'Recession' or 'Pandemic' resets timer to 6 years 
             'Favorable Election' nullifies 'Crypto Crash'
             In non-'Pandemic' years 'Favorable Election' prevents a 'Recession'
             'Favorable Election' overrides 'Recession' occurring.
