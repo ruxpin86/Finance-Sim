@@ -92,6 +92,20 @@ Next upgrades
             crypto_crash_blocked_years_remaining = 0   
             LIR_years_remaining = 2
             election_year_interval = 3
+
+    KINDA Pseudocode:
+    
+    This is inside a function called def roll_random_event() 
+    All counters are == 0 
+    probability is rolled for each event 
+    this function returns a boolean value for each roll 
+    if the boolean is true then the corresponding counter is set 
+    election_year_interval = 3 
+    after the roll counters are decremented after the roll with the exception of election_year_interval 
+    
+    next I would define a function called def apply_random_event_return(asset_balances) 
+    this will loop over each asset and apply the random event effect to each asset 
+    this would return the asset_balances back to main to then be calculated and passed along to the next year
             
 
 FOR LATER
