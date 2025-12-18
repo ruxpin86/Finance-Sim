@@ -136,12 +136,41 @@ def rebalance_every_10th_year(portfolio_balance, asset_balances, allocations, as
 
 #this will determine the state behavior of an event by rolling probability to see if it has occurred
 def roll_random_event(counters):
+    random_events = {
+        "pandemic": False,
+        "recession": False,
+        "tech surge": False,
+        "favorable election": False,
+        "crypto crash": False,
+        "LIR": False,
+    }
 
+    roll = random.random() #refactoring to have a function scoped random 'dice roll' that does not have to be defined in each 'if' statement
+    #'pandemic' event roll
     if counters["recession_pandemic_blocked_years_remaining"] == 0:
-        roll = random.random()
-        return roll <= 0.03
-    else:
-        return False
+        if roll <= 0.03:
+            random_events["pandemic"] = True
+
+    #'recession' event roll
+    if counters["recession_pandemic_blocked_years_remaining"] == 0:
+        if random_events["pandemic"] == True:
+            if roll <= 0.33:
+                random_events["recession"] = True
+        else:
+            if roll <= 0.25:
+                random_events["recession"] = True
+    
+    #'tech-surge' event roll
+    if counters["tech_surge_blocked_years_remianing"] == 0:
+        if random_events["recession"] == True:
+            random_events["tech surge"] = False
+        else:
+            if roll <= .20:
+                random_events["tech surge"] = True
+
+
+    return random_events
+
 
 
 
@@ -275,4 +304,5 @@ event_counters = {
 "LIR_years_remaining": 0,
 "election_year": 0
 }
-print(f"Pandemic happened? {roll_random_event(event_counters)}")
+for i in range(10):
+    print(roll_random_event(event_counters))
