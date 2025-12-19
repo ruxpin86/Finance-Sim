@@ -145,14 +145,15 @@ def roll_random_event(counters):
         "LIR": False,
     }
 
-    roll = random.random() #refactoring to have a function scoped random 'dice roll' that does not have to be defined in each 'if' statement
     #'pandemic' event roll
     if counters["recession_pandemic_blocked_years_remaining"] == 0:
+        roll = random.random()
         if roll <= 0.03:
             random_events["pandemic"] = True
 
     #'recession' event roll
     if counters["recession_pandemic_blocked_years_remaining"] == 0:
+        roll = random.random()
         if random_events["pandemic"] == True:
             if roll <= 0.33:
                 random_events["recession"] = True
@@ -162,16 +163,36 @@ def roll_random_event(counters):
     
     #'tech-surge' event roll
     if counters["tech_surge_blocked_years_remianing"] == 0:
+        roll = random.random()
         if random_events["recession"] == True:
             random_events["tech surge"] = False
         else:
             if roll <= .20:
                 random_events["tech surge"] = True
 
+    #'crypto crash' event roll
+    if counters["crypto_crash_blocked_years_remaining"] == 0:
+        roll = random.random()
+        if random_events["favorable election"] == True:
+            random_events["crypto crash"] = False
+        else:
+            if roll <= 0.25:
+                random_events["crypto crash"] = True
+    
+    #'favorable election' event roll
+    if counters["election_year_interval"] == 0:
+        roll = random.random()
+        if roll <= .50:
+            random_events["favorable election"] = True
+            #what happens if the election occurs during a 'recession' event?
+    
+    #checking LIR condition
+    if counters["LIR_years_remaining"] == 0 and random_events["pandemic"] == True:
+        random_events["LIR"] = True
+    if counters["LIR_years_remaining"] == 0 and random_events["recession"] == True:
+        random_events["LIR"] = True
 
     return random_events
-
-
 
 
 
