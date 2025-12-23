@@ -218,6 +218,8 @@ def update_event_counters(counters, events):
     if counters["election_year_interval"] == 0:
         counters["election_year_interval"] = 3
 
+    return counters
+
 # simulates a single year of compounding by looping through each asset and updating it's value
 def sim_one_year(asset_balances, year):
 
