@@ -220,6 +220,11 @@ def update_event_counters(counters, events):
 
     return counters
 
+def apply_random_event_effects(events):
+    if events["pandemic"] == True:
+
+
+
 # simulates a single year of compounding by looping through each asset and updating it's value
 def sim_one_year(asset_balances, year):
 
@@ -260,7 +265,6 @@ def main():
     "crypto_crash_blocked_years_remaining": 0,
     "election_year_interval": 0,
     "LIR_years_remaining": 0,
-    "election_year": 0
     }
 
     #get user asset allocations
@@ -286,6 +290,10 @@ def main():
 
     for _ in range(total_years):
         #pre_year_summary()
+
+        random_events = roll_random_event(event_counters) #stores the return of roll_random_events() to be passed to update_event_counters()
+        update_event_counters(event_counters, random_events) #handle the event counters before applying effects of those events
+        apply_random_event_effects(random_events)
 
         asset_balances, current_year = sim_one_year(asset_balances, current_year)
 
@@ -356,7 +364,6 @@ event_counters = {
 "crypto_crash_blocked_years_remaining": 0,
 "election_year_interval": 0,
 "LIR_years_remaining": 0,
-"election_year": 0
 }
 for i in range(10):
     print(roll_random_event(event_counters))
