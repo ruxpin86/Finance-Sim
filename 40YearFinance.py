@@ -170,7 +170,6 @@ def roll_random_event(counters):
             if roll <= .20:
                 random_events["tech surge"] = True
 
-    
     #'favorable election' event roll
     if counters["election_year_interval"] == 0:
         roll = random.random()
@@ -220,28 +219,30 @@ def update_event_counters(counters, events):
 
     return counters
 
-def apply_random_event_effects(events):
+#function to apply effects to assets if event rolls True for a given year
+def apply_random_event_effects(events, base_return_ranges):
+    modified_return_range = base_return_ranges[:]
+
     if events["pandemic"] == True:
+        for i in range(len(base_return_ranges) - 1):
+            low, high = modified_return_range[i]
+            modified_return_range[i] = (low - 0.35, high - 0.10)
+    
+    if events["recession"] == True:
+        for i in range(len(base_return_ranges) - 1):
+            low, high = modified_return_range[i]
+            modified_return_range[i] = (low - 0.15, high - 0.05)
 
-
+    return modified_return_range
 
 # simulates a single year of compounding by looping through each asset and updating it's value
-def sim_one_year(asset_balances, year):
+def sim_one_year(asset_balances, year, base_return_ranges):
 
     updated_balances = []
 
-    #list of tuples for annual return rate ranges
-    return_ranges = [
-        (-0.02, 0.09),  #Bond return range
-        (-0.08, 0.25),  #ETF return range
-        (-.20, 0.50),   #Stocks return range
-        (-0.40, 0.80),  #Crypto
-        (0.02, 0.04)    #HYSA
-    ]
-
     #loop through asset balances and then apply a random return for the year
-    for i in range(len(return_ranges)):
-        low, high = return_ranges[i] #unpacks the tuple in return_ranges so it's usable with random()
+    for i in range(len(base_return_ranges)):
+        low, high = base_return_ranges[i] #unpacks the tuple in return_ranges so it's usable with random()
         random_return = random.uniform(low, high) #getting a random number within the specified range
         new_asset_balance = asset_balances[i] * (1 + random_return) #multiply asset_balance by random_return to get growth or loss for the year
         updated_balances.append(new_asset_balance) #assign that updated balance to the list updated_balances
@@ -261,11 +262,20 @@ def main():
     annual_contribution_list = [] #empty list to assign (monthly_contributions * 12) to store monthly converted to yearly
     event_counters = { #stores the cool-down timers for events per the defined rules
     "recession_pandemic_blocked_years_remaining": 0,
-    "tech_surge_blocked_years_remianing": 0,
+    "tech_surge_blocked_years_remaining": 0,
     "crypto_crash_blocked_years_remaining": 0,
     "election_year_interval": 0,
     "LIR_years_remaining": 0,
     }
+
+    #list of tuples for annual base return rate ranges that can now be changed based on event occurrence
+    base_return_ranges = [
+    (-0.02, 0.09),  #Bond return range
+    (-0.08, 0.25),  #ETF return range
+    (-.20, 0.50),   #Stocks return range
+    (-0.40, 0.80),  #Crypto
+    (0.02, 0.04)    #HYSA
+]
 
     #get user asset allocations
     allocations = get_user_allocations(starting_balance)
@@ -293,9 +303,9 @@ def main():
 
         random_events = roll_random_event(event_counters) #stores the return of roll_random_events() to be passed to update_event_counters()
         update_event_counters(event_counters, random_events) #handle the event counters before applying effects of those events
-        apply_random_event_effects(random_events)
+        event_effects = apply_random_event_effects(random_events, base_return_ranges)
 
-        asset_balances, current_year = sim_one_year(asset_balances, current_year)
+        asset_balances, current_year = sim_one_year(asset_balances, current_year, event_effects)
 
         for balance in range(len(asset_balances)):
             asset_balances[balance] += annual_contribution_list[balance]
