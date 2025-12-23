@@ -48,7 +48,7 @@ Next upgrades
         >Favorable Election = Stocks +8% ETFs +12% (50% every 4th year)
         >Lower Interest Rates (LIR) = Bonds +10% (for 3 years following 'Recession' OR 'Pandemic' event)
         >>>Multiple events can happen each year, but...
-            'Recession' blocks a 'Tech Surge' for that year and the year following but can happen in years 2&3 of 'LIR' 
+            'Recession' blocks a 'Tech Surge' for that year.
             'Recession' cannot occur back-to-back
             'Recession' and 'Crypto Crash' can occur in the same year
             'Recession' resets the interest rate timer

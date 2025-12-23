@@ -170,14 +170,6 @@ def roll_random_event(counters):
             if roll <= .20:
                 random_events["tech surge"] = True
 
-    #'crypto crash' event roll
-    if counters["crypto_crash_blocked_years_remaining"] == 0:
-        roll = random.random()
-        if random_events["favorable election"] == True:
-            random_events["crypto crash"] = False
-        else:
-            if roll <= 0.25:
-                random_events["crypto crash"] = True
     
     #'favorable election' event roll
     if counters["election_year_interval"] == 0:
@@ -186,6 +178,15 @@ def roll_random_event(counters):
             random_events["favorable election"] = True
             #what happens if the election occurs during a 'recession' event?
     
+    #'crypto crash' event roll
+    if counters["crypto_crash_blocked_years_remaining"] == 0:
+        roll = random.random()
+        if random_events["favorable election"] == True:
+            random_events["crypto crash"] = False
+        else:
+            if roll <= 0.25:
+                random_events["crypto crash"] = True
+
     #checking LIR condition
     if counters["LIR_years_remaining"] == 0 and random_events["pandemic"] == True:
         random_events["LIR"] = True
@@ -194,7 +195,28 @@ def roll_random_event(counters):
 
     return random_events
 
+#function to handle the counter cool-downs so that events are rolled only when their effects have worn off
+def update_event_counters(counters, events):
+    for key in counters:
+        if counters[key] > 0:
+            counters[key] -= 1
+    
+    if events["pandemic"] == True:
+        counters["recession_pandemic_blocked_years_remaining"] = 6
+        counters["tech_surge_blocked_years-remaining"] = 1
+        counters["LIR_years_remaining"] = 3
+    
+    if events["recession"] == True:
+        counters["recession_pandemic_blocked_years_remaining"] = 6
+        counters["tech_surge_blocked_years_remaining"] = 1
+        counters["LIR_years_remaining"] = 3
 
+    if events["favorable election"] == True:
+        counters["crypto_crash_blocked_years_remaining"] = 1
+        counters["recession_pandemic_blocked_years_remaining"] = 1
+    
+    if counters["election_year_interval"] == 0:
+        counters["election_year_interval"] = 3
 
 # simulates a single year of compounding by looping through each asset and updating it's value
 def sim_one_year(asset_balances, year):
@@ -224,61 +246,69 @@ def sim_one_year(asset_balances, year):
     #TODO: print a yearly summary with percent increases and the amount made in each asset category
 
 #main function to run the program
-# def main():
-#     current_year = 0 #initialize the year
-#     total_years = 40 #set the length/time horizon of the simulation
-#     starting_balance = 2000 #users balance to start the simulation (this could easily just be zero with the monthly contribution providing the fuel)
-#     asset_list = ["Bonds", "ETFs", "Stocks", "Crypto", "HYSA"] #List of assets as strings for output
-#     annual_contribution_list = [] #empty list to assign (monthly_contributions * 12) to store monthly converted to yearly
+def main():
+    current_year = 0 #initialize the year
+    total_years = 40 #set the length/time horizon of the simulation
+    starting_balance = 2000 #users balance to start the simulation (this could easily just be zero with the monthly contribution providing the fuel)
+    asset_list = ["Bonds", "ETFs", "Stocks", "Crypto", "HYSA"] #List of assets as strings for output
+    annual_contribution_list = [] #empty list to assign (monthly_contributions * 12) to store monthly converted to yearly
+    event_counters = { #stores the cool-down timers for events per the defined rules
+    "recession_pandemic_blocked_years_remaining": 0,
+    "tech_surge_blocked_years_remianing": 0,
+    "crypto_crash_blocked_years_remaining": 0,
+    "election_year_interval": 0,
+    "LIR_years_remaining": 0,
+    "election_year": 0
+    }
 
-#     #get user asset allocations
-#     allocations = get_user_allocations(starting_balance)
+    #get user asset allocations
+    allocations = get_user_allocations(starting_balance)
 
-#     #ask user for monthly contribution amount
-#     monthly_contributions = add_monthly_contribution(allocations)
-#     #take the list of monthly_contributions and convert it to an annual_contribution amount, add it to the annual_contributions_list
-#     for contribution in range(len(monthly_contributions)):
-#         annual_contribution = monthly_contributions[contribution] * 12
-#         annual_contribution_list.append(annual_contribution)
+    #ask user for monthly contribution amount
+    monthly_contributions = add_monthly_contribution(allocations)
+    #take the list of monthly_contributions and convert it to an annual_contribution amount, add it to the annual_contributions_list
+    for contribution in range(len(monthly_contributions)):
+        annual_contribution = monthly_contributions[contribution] * 12
+        annual_contribution_list.append(annual_contribution)
 
-#     #convert the user input allocation percentages into dollar amounts across the defined starting_balance
-#     asset_balances = allocate_initial_balances(allocations, starting_balance)
+    #convert the user input allocation percentages into dollar amounts across the defined starting_balance
+    asset_balances = allocate_initial_balances(allocations, starting_balance)
 
-#     #add on the annual contribution amounts to each asset class
-#     portfolio_balance = sum(asset_balances)
+    #add on the annual contribution amounts to each asset class
+    portfolio_balance = sum(asset_balances)
 
-#     def pre_year_summary(): #I may use this function in the future to provide more output to user, but for now it was a bit much in the terminal
-#         print(f"{user_name}, this is your current breakdown of allocations and current account values...")
-#         for i in range(len(asset_balances)):
-#             print(f"{asset_list[i]} {allocations[i] * 100:.1f}%, {asset_balances[i]:,.2f}")
+    def pre_year_summary(): #I may use this function in the future to provide more output to user, but for now it was a bit much in the terminal
+        print(f"{user_name}, this is your current breakdown of allocations and current account values...")
+        for i in range(len(asset_balances)):
+            print(f"{asset_list[i]} {allocations[i] * 100:.1f}%, {asset_balances[i]:,.2f}")
 
-#     for _ in range(total_years):
-#         #pre_year_summary()
+    for _ in range(total_years):
+        #pre_year_summary()
 
-#         asset_balances, current_year = sim_one_year(asset_balances, current_year)
+        asset_balances, current_year = sim_one_year(asset_balances, current_year)
 
-#         for balance in range(len(asset_balances)):
-#             asset_balances[balance] += annual_contribution_list[balance]
-#         # print(f"After year {current_year} your accounts are now at:")
-#         # for i in range(len(asset_balances)):                      THIS CAN ALL BE IGNORED, MAY USE IN THE FUTURE BUT CURRENTLY BLOATING THE OUTPUT
-#         #     print(f"{asset_list[i]}: {asset_balances[i]:,.2f}") 
-#         portfolio_balance = sum(asset_balances) #totaling up all assets to output total value of the users portfolio
-#         # print(f"Total: {portfolio_balance:,.2f}\n")
+        for balance in range(len(asset_balances)):
+            asset_balances[balance] += annual_contribution_list[balance]
+        # print(f"After year {current_year} your accounts are now at:")
+        # for i in range(len(asset_balances)):                      THIS CAN ALL BE IGNORED, MAY USE IN THE FUTURE BUT CURRENTLY BLOATING THE OUTPUT
+        #     print(f"{asset_list[i]}: {asset_balances[i]:,.2f}") 
+        portfolio_balance = sum(asset_balances) #totaling up all assets to output total value of the users portfolio
+        # print(f"Total: {portfolio_balance:,.2f}\n")
 
-#         #for every decade of the simulation rebalance that portfolio back to the original allocations defined by the user and print breakdown
-#         if current_year % 10 == 0:
-#             asset_balances = rebalance_every_10th_year(portfolio_balance, asset_balances, allocations, asset_list)
+        #for every decade of the simulation rebalance that portfolio back to the original allocations defined by the user and print breakdown
+        if current_year % 10 == 0:
+            asset_balances = rebalance_every_10th_year(portfolio_balance, asset_balances, allocations, asset_list)
             
 
-#     #final output for investment results after defined amount of years... I could have the user define their time horizon to tailor it to their investment goals
-#     print(f"After year {current_year} your accounts are now at:")
-#     for i in range(len(asset_balances)):
-#         print(f"{asset_list[i]}: {asset_balances[i]:,.2f}")
-#     print(f"Ending portfolio balance: ${portfolio_balance:,.2f}\n")
+    #final output for investment results after defined amount of years... I could have the user define their time horizon to tailor it to their investment goals
+    print(f"After year {current_year} your accounts are now at:")
+    for i in range(len(asset_balances)):
+        print(f"{asset_list[i]}: {asset_balances[i]:,.2f}")
+    print(f"Ending portfolio balance: ${portfolio_balance:,.2f}\n")
 
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
 
 
 #TO ANYONE GRADING THIS FEEL FREE TO IGNORE BELOW THIS LINE!!!
@@ -317,6 +347,7 @@ def sim_one_year(asset_balances, year):
 
 #---------------------------------------
 
+#Testing my roll_random_events() function to see if I am returning booleans correctly for 10 years worth of events
 event_counters = {
 "recession_pandemic_blocked_years_remaining": 0,
 "tech_surge_blocked_years_remianing": 0,
