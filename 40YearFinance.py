@@ -220,16 +220,22 @@ def update_event_counters(counters, events):
     return counters
 
 #function to apply effects to assets if event rolls True for a given year
-def apply_random_event_effects(events, base_return_ranges):
+def apply_random_event_effects(events, event_counters, base_return_ranges):
     modified_return_range = base_return_ranges[:]
 
+    #LIR needs to be a regime change that is accounted for before shocks are factored in by the function
+
     if events["pandemic"] == True:
-        for i in range(len(base_return_ranges) - 1):
+        #bonds become safer, and better returns
+        bond_low, bond_high = modified_return_range[0] #this logic needs to live in its own place outside of the loop
+        modified_return_range[0] = bond_low + 0.01, bond_high + 0.05
+
+        for i in range(1, len(base_return_ranges) - 1):
             low, high = modified_return_range[i]
             modified_return_range[i] = (low - 0.35, high - 0.10)
     
     if events["recession"] == True:
-        for i in range(len(base_return_ranges) - 1):
+        for i in range(1, len(base_return_ranges) - 1):
             low, high = modified_return_range[i]
             modified_return_range[i] = (low - 0.15, high - 0.05)
 
@@ -303,7 +309,7 @@ def main():
 
         random_events = roll_random_event(event_counters) #stores the return of roll_random_events() to be passed to update_event_counters()
         update_event_counters(event_counters, random_events) #handle the event counters before applying effects of those events
-        event_effects = apply_random_event_effects(random_events, base_return_ranges)
+        event_effects = apply_random_event_effects(random_events, event_counters, base_return_ranges)
 
         asset_balances, current_year = sim_one_year(asset_balances, current_year, event_effects)
 
