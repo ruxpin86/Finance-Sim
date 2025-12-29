@@ -46,7 +46,7 @@ Next upgrades
         >Crypto Crash = Crypto -25% (25% every year)
         >Pandemic = all assets -35% (3% every year)
         >Favorable Election = Stocks +8% ETFs +12% (50% every 4th year)
-        >Lower Interest Rates (LIR) = Bonds +10% (for 3 years following 'Recession' OR 'Pandemic' event)
+        >Lower Interest Rates (LIR) = Bonds +5% (for 3 years following 'Recession' OR 'Pandemic' event)
         >>>Multiple events can happen each year, but...
             'Recession' blocks a 'Tech Surge' for that year.
             'Recession' cannot occur back-to-back
