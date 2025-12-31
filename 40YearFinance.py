@@ -162,7 +162,7 @@ def roll_random_event(counters):
                 random_events["recession"] = True
     
     #'tech-surge' event roll
-    if counters["tech_surge_blocked_years_remianing"] == 0:
+    if counters["tech_surge_blocked_years_remaining"] == 0:
         roll = random.random()
         if random_events["recession"] == True:
             random_events["tech surge"] = False
@@ -202,7 +202,7 @@ def update_event_counters(counters, events):
     
     if events["pandemic"] == True:
         counters["recession_pandemic_blocked_years_remaining"] = 6
-        counters["tech_surge_blocked_years-remaining"] = 1
+        counters["tech_surge_blocked_years_remaining"] = 1
         counters["LIR_years_remaining"] = 3
     
     if events["recession"] == True:
@@ -260,19 +260,15 @@ def apply_random_event_effects(events, event_counters, base_return_ranges):
         crypto_low, crypto_high = modified_return_range[3]
         modified_return_range[3] = (crypto_low - 0.10, crypto_high - 0.70)
 
-
     return modified_return_range
 
 # simulates a single year of compounding by looping through each asset and updating it's value
-def sim_one_year(asset_balances, year, base_return_ranges, event_effects):
+def sim_one_year(asset_balances, year, yearly_return_ranges):
 
     updated_balances = []
 
-    #TODO: Apply random event effects in the yearly simulation
-
-    #loop through asset balances and then apply a random return for the year
-    for i in range(len(base_return_ranges)):
-        low, high = base_return_ranges[i] #unpacks the tuple in return_ranges so it's usable with random()
+    for i in range(len(yearly_return_ranges)):
+        low, high = yearly_return_ranges[i] #unpacks the tuple in return_ranges so it's usable with random()
         random_return = random.uniform(low, high) #getting a random number within the specified range
         new_asset_balance = asset_balances[i] * (1 + random_return) #multiply asset_balance by random_return to get growth or loss for the year
         updated_balances.append(new_asset_balance) #assign that updated balance to the list updated_balances
@@ -333,9 +329,9 @@ def main():
 
         random_events = roll_random_event(event_counters) #stores the return of roll_random_events() to be passed to update_event_counters()
         update_event_counters(event_counters, random_events) #handle the event counters before applying effects of those events
-        event_effects = apply_random_event_effects(random_events, event_counters, base_return_ranges)
+        yearly_return_ranges = apply_random_event_effects(random_events, event_counters, base_return_ranges)
 
-        asset_balances, current_year = sim_one_year(asset_balances, current_year,base_return_ranges, event_effects)
+        asset_balances, current_year = sim_one_year(asset_balances, current_year, yearly_return_ranges)
 
         for balance in range(len(asset_balances)):
             asset_balances[balance] += annual_contribution_list[balance]
@@ -398,12 +394,12 @@ if __name__ == "__main__":
 #---------------------------------------
 
 #Testing my roll_random_events() function to see if I am returning booleans correctly for 10 years worth of events
-event_counters = {
-"recession_pandemic_blocked_years_remaining": 0,
-"tech_surge_blocked_years_remianing": 0,
-"crypto_crash_blocked_years_remaining": 0,
-"election_year_interval": 0,
-"LIR_years_remaining": 0,
-}
-for i in range(10):
-    print(roll_random_event(event_counters))
+# event_counters = {
+# "recession_pandemic_blocked_years_remaining": 0,
+# "tech_surge_blocked_years_remianing": 0,
+# "crypto_crash_blocked_years_remaining": 0,
+# "election_year_interval": 0,
+# "LIR_years_remaining": 0,
+# }
+# for i in range(10):
+#     print(roll_random_event(event_counters))
