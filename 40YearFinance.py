@@ -192,10 +192,13 @@ def roll_random_event(counters):
     if counters["LIR_years_remaining"] == 0 and random_events["recession"] == True:
         random_events["LIR"] = True
 
+    print(f"RANDOM EVENTS: {random_events}")
+
     return random_events
 
 #function to handle the counter cool-downs so that events are rolled only when their effects have worn off
 def update_event_counters(counters, events):
+    #decrement an active event counter
     for key in counters:
         if counters[key] > 0:
             counters[key] -= 1
@@ -221,6 +224,7 @@ def update_event_counters(counters, events):
 
 #function to apply effects to assets if event rolls True for a given year
 def apply_random_event_effects(events, event_counters, base_return_ranges):
+    print(f"BASE RETURNS: {base_return_ranges}")
     modified_return_range = base_return_ranges[:]
 
     #LIR needs to be a regime change that is accounted for before shocks are factored in by the function
@@ -260,11 +264,13 @@ def apply_random_event_effects(events, event_counters, base_return_ranges):
         crypto_low, crypto_high = modified_return_range[3]
         modified_return_range[3] = (crypto_low - 0.10, crypto_high - 0.70)
 
+    print(f"MODIFIED RETURNS: {modified_return_range}")
+
     return modified_return_range
 
 # simulates a single year of compounding by looping through each asset and updating it's value
 def sim_one_year(asset_balances, year, yearly_return_ranges):
-
+    print(f"THIS YEARS RETURN RANGES: {yearly_return_ranges}\n")
     updated_balances = []
 
     for i in range(len(yearly_return_ranges)):
@@ -344,6 +350,8 @@ def main():
         #for every decade of the simulation rebalance that portfolio back to the original allocations defined by the user and print breakdown
         if current_year % 10 == 0:
             asset_balances = rebalance_every_10th_year(portfolio_balance, asset_balances, allocations, asset_list)
+        
+        print(f"EVENT COUNTERS: {event_counters}")
             
 
     #final output for investment results after defined amount of years... I could have the user define their time horizon to tailor it to their investment goals
