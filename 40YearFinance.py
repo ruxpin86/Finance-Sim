@@ -192,7 +192,7 @@ def roll_random_event(counters):
     if counters["LIR_years_remaining"] == 0 and random_events["recession"] == True:
         random_events["LIR"] = True
 
-    print(f"RANDOM EVENTS: {random_events}")
+    # print(f"RANDOM EVENTS: {random_events}")
 
     return random_events
 
@@ -224,7 +224,7 @@ def update_event_counters(counters, events):
 
 #function to apply effects to assets if event rolls True for a given year
 def apply_random_event_effects(events, event_counters, base_return_ranges):
-    print(f"BASE RETURNS: {base_return_ranges}")
+    # print(f"BASE RETURNS: {base_return_ranges}")
     modified_return_range = base_return_ranges[:]
 
     #LIR needs to be a regime change that is accounted for before shocks are factored in by the function
@@ -264,7 +264,7 @@ def apply_random_event_effects(events, event_counters, base_return_ranges):
         crypto_low, crypto_high = modified_return_range[3]
         modified_return_range[3] = (crypto_low - 0.10, crypto_high - 0.70)
 
-    print(f"THIS YEARS RETURNS: {modified_return_range}")
+    # print(f"THIS YEARS RETURNS: {modified_return_range}")
 
     return modified_return_range
 
@@ -284,6 +284,11 @@ def sim_one_year(asset_balances, year, yearly_return_ranges):
     return updated_balances, year
 
     #TODO: print a yearly summary with percent increases and the amount made in each asset category
+
+def print_year_summary(): #I may use this function in the future to provide more output to user, but for now it was a bit much in the terminal
+        print(f"{user_name}, this is your current breakdown of allocations and current account values...")
+        for i in range(len(asset_balances)):
+            print(f"{asset_list[i]} {allocations[i] * 100:.1f}%, {asset_balances[i]:,.2f}")
 
 #main function to run the program
 def main():
@@ -325,22 +330,24 @@ def main():
     #add on the annual contribution amounts to each asset class
     portfolio_balance = sum(asset_balances)
 
-    def pre_year_summary(): #I may use this function in the future to provide more output to user, but for now it was a bit much in the terminal
-        print(f"{user_name}, this is your current breakdown of allocations and current account values...")
-        for i in range(len(asset_balances)):
-            print(f"{asset_list[i]} {allocations[i] * 100:.1f}%, {asset_balances[i]:,.2f}")
-            
-    print(("=" * 10) + "\n" + "YEAR: 0" + "\n" + ("=" * 10)+ "\n")
 
     for _ in range(total_years):
-        #pre_year_summary()
+        print(("=" * 10) + "\n" + "YEAR: " + str(current_year + 1) + "\n" + ("=" * 10)+ "\n")
+
         random_events = roll_random_event(event_counters) #stores the return of roll_random_events() to be passed to update_event_counters()
+        print("Events that happened this year: ")
+        for event_name, happened in random_events.items():
+            if happened == True:
+                print(f">>> {event_name.upper()}")     
         update_event_counters(event_counters, random_events) #handle the event counters before applying effects of those events
+
         yearly_return_ranges = apply_random_event_effects(random_events, event_counters, base_return_ranges)
+        
+        # for asset in range(len(asset_list)):
+        #     print(f"")
 
         asset_balances, current_year = sim_one_year(asset_balances, current_year, yearly_return_ranges)
 
-        print(("=" * 10) + "\n" + "YEAR: " + str(current_year) + "\n" + ("=" * 10)+ "\n")
         for balance in range(len(asset_balances)):
             asset_balances[balance] += annual_contribution_list[balance]
         # print(f"After year {current_year} your accounts are now at:")
@@ -353,7 +360,7 @@ def main():
         if current_year % 10 == 0:
             asset_balances = rebalance_every_10th_year(portfolio_balance, asset_balances, allocations, asset_list)
         
-        print(f"EVENT COUNTERS: {event_counters}")
+        # print(f"EVENT COUNTERS: {event_counters}")
             
 
     #final output for investment results after defined amount of years... I could have the user define their time horizon to tailor it to their investment goals
