@@ -264,7 +264,7 @@ def apply_random_event_effects(events, event_counters, base_return_ranges):
         crypto_low, crypto_high = modified_return_range[3]
         modified_return_range[3] = (crypto_low - 0.10, crypto_high - 0.70)
 
-    print(f"MODIFIED RETURNS: {modified_return_range}")
+    print(f"THIS YEARS RETURNS: {modified_return_range}")
 
     return modified_return_range
 
@@ -329,16 +329,18 @@ def main():
         print(f"{user_name}, this is your current breakdown of allocations and current account values...")
         for i in range(len(asset_balances)):
             print(f"{asset_list[i]} {allocations[i] * 100:.1f}%, {asset_balances[i]:,.2f}")
+            
+    print(("=" * 10) + "\n" + "YEAR: 0" + "\n" + ("=" * 10)+ "\n")
 
     for _ in range(total_years):
         #pre_year_summary()
-
         random_events = roll_random_event(event_counters) #stores the return of roll_random_events() to be passed to update_event_counters()
         update_event_counters(event_counters, random_events) #handle the event counters before applying effects of those events
         yearly_return_ranges = apply_random_event_effects(random_events, event_counters, base_return_ranges)
 
         asset_balances, current_year = sim_one_year(asset_balances, current_year, yearly_return_ranges)
 
+        print(("=" * 10) + "\n" + "YEAR: " + str(current_year) + "\n" + ("=" * 10)+ "\n")
         for balance in range(len(asset_balances)):
             asset_balances[balance] += annual_contribution_list[balance]
         # print(f"After year {current_year} your accounts are now at:")
@@ -363,9 +365,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-#TO ANYONE GRADING THIS FEEL FREE TO IGNORE BELOW THIS LINE!!!
 
 #------------------------------TEST LAND------------------------------#
 
