@@ -285,7 +285,9 @@ def sim_one_year(asset_balances, year, yearly_return_ranges):
 
     #TODO: print a yearly summary with percent increases and the amount made in each asset category
 
-def print_year_summary(): #I may use this function in the future to provide more output to user, but for now it was a bit much in the terminal
+"""I may use this function in the future to cleanly provide more output to user 
+this is the beginnings of the helper function, but for now I am doing it inside of main()"""
+def print_year_summary(): 
         print(f"{user_name}, this is your current breakdown of allocations and current account values...")
         for i in range(len(asset_balances)):
             print(f"{asset_list[i]} {allocations[i] * 100:.1f}%, {asset_balances[i]:,.2f}")
@@ -332,19 +334,25 @@ def main():
 
 
     for _ in range(total_years):
-        print(("=" * 10) + "\n" + "YEAR: " + str(current_year + 1) + "\n" + ("=" * 10)+ "\n")
+        print(("=" * 10) + "\n" + "YEAR: " + str(current_year + 1) + "\n" + ("=" * 10)+ "\n") #year header
 
-        random_events = roll_random_event(event_counters) #stores the return of roll_random_events() to be passed to update_event_counters()
+        #print portfolio asset balances before the year gets simulated
+        print(("-" * 5) + " Portfolio asset balances to start the year " + ("-" * 5))
+        for asset, balance in zip(asset_list, asset_balances): #first time using the zip() method to interate over two lists simulataneously
+            print(f"{asset.capitalize()}: ${balance:,.2f}")
+        print() #break before events output
+
+        random_events = roll_random_event(event_counters) #stores the return of roll_random_events() (dictionary) to be passed to update_event_counters()
         print("Events that happened this year: ")
-        for event_name, happened in random_events.items():
-            if happened == True:
-                print(f">>> {event_name.upper()}")     
+        for event_name, rolled_true in random_events.items(): #loop through the events dictionary and break it apart for output
+            if rolled_true == True:
+                print(f">>> {event_name.upper()} <<<")
+
         update_event_counters(event_counters, random_events) #handle the event counters before applying effects of those events
 
         yearly_return_ranges = apply_random_event_effects(random_events, event_counters, base_return_ranges)
         
-        # for asset in range(len(asset_list)):
-        #     print(f"")
+            
 
         asset_balances, current_year = sim_one_year(asset_balances, current_year, yearly_return_ranges)
 
