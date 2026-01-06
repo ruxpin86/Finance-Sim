@@ -270,7 +270,7 @@ def apply_random_event_effects(events, event_counters, base_return_ranges):
 
 # simulates a single year of compounding by looping through each asset and updating it's value
 def sim_one_year(asset_balances, year, yearly_return_ranges):
-    print(f"THIS YEARS RETURN RANGES: {yearly_return_ranges}\n")
+    # print(f"THIS YEARS RETURN RANGES: {yearly_return_ranges}\n")
     updated_balances = []
 
     for i in range(len(yearly_return_ranges)):
@@ -337,7 +337,7 @@ def main():
         print(("=" * 10) + "\n" + "YEAR: " + str(current_year + 1) + "\n" + ("=" * 10)+ "\n") #year header
 
         #print portfolio asset balances before the year gets simulated
-        print(("-" * 5) + " Portfolio asset balances to start the year " + ("-" * 5))
+        print(("-" * 5) + " Portfolio asset balances to start year " + str(current_year + 1) + " " + ("-" * 5))
         for asset, balance in zip(asset_list, asset_balances): #first time using the zip() method to interate over two lists simulataneously
             print(f"{asset.capitalize()}: ${balance:,.2f}")
         print() #break before events output
@@ -347,27 +347,40 @@ def main():
         for event_name, rolled_true in random_events.items(): #loop through the events dictionary and break it apart for output
             if rolled_true == True:
                 print(f">>> {event_name.upper()} <<<")
+        print() #new line
 
         update_event_counters(event_counters, random_events) #handle the event counters before applying effects of those events
 
         yearly_return_ranges = apply_random_event_effects(random_events, event_counters, base_return_ranges)
-        
             
-
+        #run the simulation for the year
         asset_balances, current_year = sim_one_year(asset_balances, current_year, yearly_return_ranges)
 
+        #add annual contributions to each asset based on % allocations
         for balance in range(len(asset_balances)):
             asset_balances[balance] += annual_contribution_list[balance]
-        # print(f"After year {current_year} your accounts are now at:")
-        # for i in range(len(asset_balances)):                      THIS CAN ALL BE IGNORED, MAY USE IN THE FUTURE BUT CURRENTLY BLOATING THE OUTPUT
-        #     print(f"{asset_list[i]}: {asset_balances[i]:,.2f}") 
+        
         portfolio_balance = sum(asset_balances) #totaling up all assets to output total value of the users portfolio
-        # print(f"Total: {portfolio_balance:,.2f}\n")
+        
+        #print portfolio asset balances after the year gets simulated
+        print(("-" * 5) + " Portfolio asset balances to end year " + str(current_year) + " " + ("-" * 5))
+        for asset, balance in zip(asset_list, asset_balances): #first time using the zip() method to interate over two lists simulataneously
+            print(f"{asset.capitalize()}: ${balance:,.2f}")
+        print() #break before events output
+        print(f"Total: ${portfolio_balance:,.2f}\n")
 
         #for every decade of the simulation rebalance that portfolio back to the original allocations defined by the user and print breakdown
         if current_year % 10 == 0:
             asset_balances = rebalance_every_10th_year(portfolio_balance, asset_balances, allocations, asset_list)
         
+        #pause simulation so user can initiate the next year
+        next_year_input = input("Press 'ENTER' to continue or 'Q' to quit: ")
+        if next_year_input == "":
+            continue
+        elif next_year_input.lower() == "q":
+            print("Quitting")
+            break
+
         # print(f"EVENT COUNTERS: {event_counters}")
             
 
