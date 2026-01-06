@@ -1,5 +1,6 @@
 
 import random
+import time
 
 #TODO: let the user choose time horizon and work on cleaning up output instruction
 user_name = input("What is your name?: ")
@@ -335,19 +336,24 @@ def main():
 
     for _ in range(total_years):
         print(("=" * 10) + "\n" + "YEAR: " + str(current_year + 1) + "\n" + ("=" * 10)+ "\n") #year header
+        time.sleep(0.5)
 
         #print portfolio asset balances before the year gets simulated
         print(("-" * 5) + " Portfolio asset balances to start year " + str(current_year + 1) + " " + ("-" * 5))
         for asset, balance in zip(asset_list, asset_balances): #first time using the zip() method to interate over two lists simulataneously
             print(f"{asset.capitalize()}: ${balance:,.2f}")
+            time.sleep(0.3)
         print() #break before events output
+        time.sleep(0.5)
 
         random_events = roll_random_event(event_counters) #stores the return of roll_random_events() (dictionary) to be passed to update_event_counters()
         print("Events that happened this year: ")
         for event_name, rolled_true in random_events.items(): #loop through the events dictionary and break it apart for output
             if rolled_true == True:
                 print(f">>> {event_name.upper()} <<<")
+                time.sleep(1.2)
         print() #new line
+        time.sleep(0.5)
 
         update_event_counters(event_counters, random_events) #handle the event counters before applying effects of those events
 
@@ -366,7 +372,9 @@ def main():
         print(("-" * 5) + " Portfolio asset balances to end year " + str(current_year) + " " + ("-" * 5))
         for asset, balance in zip(asset_list, asset_balances): #first time using the zip() method to interate over two lists simulataneously
             print(f"{asset.capitalize()}: ${balance:,.2f}")
+            time.sleep(0.5)
         print() #break before events output
+        time.sleep(1.0)
         print(f"Total: ${portfolio_balance:,.2f}\n")
 
         #for every decade of the simulation rebalance that portfolio back to the original allocations defined by the user and print breakdown
@@ -380,11 +388,14 @@ def main():
         elif next_year_input.lower() == "q":
             print("Quitting")
             break
+        else:
+            continue
 
         # print(f"EVENT COUNTERS: {event_counters}")
             
 
     #final output for investment results after defined amount of years... I could have the user define their time horizon to tailor it to their investment goals
+    time.sleep(1.0)
     print(f"After year {current_year} your accounts are now at:")
     for i in range(len(asset_balances)):
         print(f"{asset_list[i]}: {asset_balances[i]:,.2f}")
